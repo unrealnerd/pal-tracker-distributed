@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Steeltoe.Extensions.Configuration.CloudFoundry;
+using Pivotal.Extensions.Configuration.ConfigServer;
 
 namespace RegistrationServer
 {
@@ -19,7 +19,7 @@ namespace RegistrationServer
             WebHost.CreateDefaultBuilder(args)
                 // https://github.com/aspnet/KestrelHttpServer/issues/1998#issuecomment-322922164
                 .UseConfiguration(new ConfigurationBuilder().AddCommandLine(args).Build())
-                .AddCloudFoundry()
+                .AddConfigServer()
                 .UseCloudFoundryHosting()
                 .UseStartup<Startup>();
     }

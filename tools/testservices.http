@@ -15,9 +15,13 @@
 @accountid = 2
 @ownerid=1
 
+### JWT- Obtain access
+curl 'https://dell-emc-pal.login.run.pivotal.io/oauth/token' -i -u '58b090d5-ffcf-40c4-9742-668e5adc25c6:614f6b29-3f4b-4816-ae66-a3ad23fb6222' -X POST -H 'Accept: application/json' -H 'Content-Type: application/x-www-form-urlencoded' -d 'grant_type=client_credentials&response_type=token'
+
+
 ### USERS-- Register a new User
 # @name registerUser
-curl -i -X POST -H "Content-Type: application/json" {{registrationurl}}/registration -d '{"name": "Arjun"}'
+curl -i -X POST -H "Content-Type: application/json" {{registrationurl}}/registration -d '{"name": "Jon Snow"}'
 
 ### USERS-- Get User with id @userid
 curl {{registrationurl}}/users/{{registerUser.response.body.$.id}}
