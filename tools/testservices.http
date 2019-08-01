@@ -1,39 +1,47 @@
-@allocationurl=http://localhost:8881
-@backlogurl=http://localhost:8882
-@registrationurl=http://localhost:8883
-@timesheeturl=http://localhost:8884
+###--- LOCAL------
+#@allocationurl=http://localhost:8881
+#@backlogurl=http://localhost:8882
+#@registrationurl=http://localhost:8883
+#@timesheeturl=http://localhost:8884
 
+###--- PCF------
+@allocationurl=https://allocations-pal-arjun-ravi.cfapps.io
+@backlogurl=https://backlog-pal-arjun-ravi.cfapps.io
+@registrationurl=https://registration-pal-arjun-ravi.cfapps.io
+@timesheeturl=https://timesheets-pal-arjun-ravi.cfapps.io
 
-@userid=1
+@userid=12
 @projectid = 1
 @accountid = 1
+@ownerid=1
 
 ### USERS-- Register a new User
-curl -i -X POST -H "Content-Type: application/json" {{registrationurl}}/registration -d '{"name": "Pete"}'
+# @name registerUser
+curl -i -X POST -H "Content-Type: application/json" {{registrationurl}}/registration -d '{"name": "Ravi"}'
 
 ### USERS-- Get User with id @userid
-curl {{registrationurl}}/users/{{userid}}
+curl {{registrationurl}}/users/{{registerUser.response.body.$.id}}
 
 ### ACCOUNTS-- Get account with id @ownerid
-curl {{registrationurl}}/accounts?ownerId=1
+curl {{registrationurl}}/accounts?ownerId={{ownerid}}
 
 ### PROJECTS-- Add a Project
 curl -i -X POST -H "Content-Type: application/json" {{registrationurl}}/projects -d '{"name": "Basket Weaving", "accountId": {{accountid}}}'
 
 ### PROJECTS-- get projects by account id
-curl {{registrationurl}}/projects?accountId=1
+curl {{registrationurl}}/projects?accountId={{accountid}}
 
 ### ALLOCATIONS-- Add a allocation
 curl -i -X POST -H "Content-Type: application/json" {{allocationurl}}/allocations -d '{"projectId": {{projectid}}, "userId": {{userid}}, "firstDay": "2015-05-17", "lastDay": "2015-05-18"}'
 
 ### ALLOCATIONS-- get allocation by project id
-curl {{allocationurl}}/allocations?projectId=1
+curl {{allocationurl}}/allocations?projectId={{projectid}}
 
 ### STORIES-- Add a story
 curl -i -X POST -H "Content-Type: application/json" {{backlogurl}}/stories -d '{"projectId": {{projectid}}, "name": "Find some reeds"}'
 
 ### STORIES-- get a story by id
-curl {{backlogurl}}/stories?projectId=1
+curl {{backlogurl}}/stories?projectId={{projectid}}
 
 ### TIME ENTRIES-- Add a time entry 
 curl -i -X POST -H "Content-Type: application/json" {{timesheeturl}}/time-entries/ -d '{"projectId": {{projectid}}, "userId": {{userid}}, "date": "2015-05-17", "hours": 6}'

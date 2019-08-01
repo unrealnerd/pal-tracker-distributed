@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Pivotal.Discovery.Client;
 using Steeltoe.CloudFoundry.Connector.MySql.EFCore;
+using Steeltoe.Common.Discovery;
 
 namespace AllocationsServer
 {
@@ -25,12 +27,14 @@ namespace AllocationsServer
             // Add framework services.
             services.AddMvc();
 
+            services.AddDiscoveryClient(Configuration);
             services.AddDbContext<AllocationContext>(options => options.UseMySql(Configuration));
             services.AddScoped<IAllocationDataGateway, AllocationDataGateway>();
 
             services.AddSingleton<IProjectClient>(sp =>
             {
-                var httpClient = new HttpClient
+                var handler = new DiscoveryHttpClientHandler(sp.GetService<IDiscoveryClient>());
+                var httpClient = new HttpClient(handler, false)
                 {
                     BaseAddress = new Uri(Configuration.GetValue<string>("REGISTRATION_SERVER_ENDPOINT"))
                 };
@@ -46,6 +50,7 @@ namespace AllocationsServer
             loggerFactory.AddDebug();
 
             app.UseMvc();
+            app.UseDiscoveryClient();
         }
     }
 }
