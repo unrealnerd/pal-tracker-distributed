@@ -7,6 +7,6 @@ applications:
   - route: timesheets-pal-arjun-ravi.apps.pikes.pal.pivotal.io
   path: Applications/TimesheetsServer/bin/Release/netcoreapp2.1/publish
   env:
-    REGISTRATION_SERVER_ENDPOINT: http://registration-pal-arjun-ravi.apps.pikes.pal.pivotal.io/
+    REGISTRATION_SERVER_ENDPOINT: http://registration-pal-arjun-ravi.cfapps.io/
   services:
   - tracker-timesheets-database
