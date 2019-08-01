@@ -10,6 +10,12 @@ using Pivotal.Discovery.Client;
 using Steeltoe.CloudFoundry.Connector.MySql.EFCore;
 using Steeltoe.Common.Discovery;
 using Steeltoe.CircuitBreaker.Hystrix;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Steeltoe.Security.Authentication.CloudFoundry;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication;
 
 namespace AllocationsServer
 {
@@ -25,12 +31,26 @@ namespace AllocationsServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             // Add framework services.
-            services.AddMvc();
+            services.AddMvc(mvcOptions =>
+            {
+                if (!Configuration.GetValue("DISABLE_AUTH", false))
+                {
+                    // Set Authorized as default policy
+                    var policy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme)
+                    .RequireAuthenticatedUser()
+                    .RequireClaim("scope", "uaa.resource")
+                    .Build();
+                    mvcOptions.Filters.Add(new AuthorizeFilter(policy));
+                }
+            });
 
             services.AddDiscoveryClient(Configuration);
             services.AddDbContext<AllocationContext>(options => options.UseMySql(Configuration));
             services.AddScoped<IAllocationDataGateway, AllocationDataGateway>();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                 .AddCloudFoundryJwtBearer(Configuration);
 
             services.AddSingleton<IProjectClient>(sp =>
             {
@@ -41,7 +61,11 @@ namespace AllocationsServer
                 };
 
                 var logger = sp.GetService<ILogger<ProjectClient>>();
-                return new ProjectClient(httpClient, logger);
+                var contextAccessor = sp.GetService<IHttpContextAccessor>();
+                return new ProjectClient(
+                     httpClient, logger,
+                     () => contextAccessor.HttpContext.GetTokenAsync("access_token")
+                 );
             });
 
             services.AddHystrixMetricsStream(Configuration);

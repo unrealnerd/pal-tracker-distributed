@@ -10,14 +10,14 @@
 @registrationurl=https://registration-pal-arjun-ravi.cfapps.io
 @timesheeturl=https://timesheets-pal-arjun-ravi.cfapps.io
 
-@userid=12
+@userid=62
 @projectid = 1
-@accountid = 1
+@accountid = 2
 @ownerid=1
 
 ### USERS-- Register a new User
 # @name registerUser
-curl -i -X POST -H "Content-Type: application/json" {{registrationurl}}/registration -d '{"name": "Ravi"}'
+curl -i -X POST -H "Content-Type: application/json" {{registrationurl}}/registration -d '{"name": "Arjun"}'
 
 ### USERS-- Get User with id @userid
 curl {{registrationurl}}/users/{{registerUser.response.body.$.id}}
