@@ -1,0 +1,43 @@
+@allocationurl=http://localhost:8881
+@backlogurl=http://localhost:8882
+@registrationurl=http://localhost:8883
+@timesheeturl=http://localhost:8884
+
+
+@userid=1
+@projectid = 1
+@accountid = 1
+
+### USERS-- Register a new User
+curl -i -X POST -H "Content-Type: application/json" {{registrationurl}}/registration -d '{"name": "Pete"}'
+
+### USERS-- Get User with id @userid
+curl {{registrationurl}}/users/{{userid}}
+
+### ACCOUNTS-- Get account with id @ownerid
+curl {{registrationurl}}/accounts?ownerId=1
+
+### PROJECTS-- Add a Project
+curl -i -X POST -H "Content-Type: application/json" {{registrationurl}}/projects -d '{"name": "Basket Weaving", "accountId": {{accountid}}}'
+
+### PROJECTS-- get projects by account id
+curl {{registrationurl}}/projects?accountId=1
+
+### ALLOCATIONS-- Add a allocation
+curl -i -X POST -H "Content-Type: application/json" {{allocationurl}}/allocations -d '{"projectId": {{projectid}}, "userId": {{userid}}, "firstDay": "2015-05-17", "lastDay": "2015-05-18"}'
+
+### ALLOCATIONS-- get allocation by project id
+curl {{allocationurl}}/allocations?projectId=1
+
+### STORIES-- Add a story
+curl -i -X POST -H "Content-Type: application/json" {{backlogurl}}/stories -d '{"projectId": {{projectid}}, "name": "Find some reeds"}'
+
+### STORIES-- get a story by id
+curl {{backlogurl}}/stories?projectId=1
+
+### TIME ENTRIES-- Add a time entry 
+curl -i -X POST -H "Content-Type: application/json" {{timesheeturl}}/time-entries/ -d '{"projectId": {{projectid}}, "userId": {{userid}}, "date": "2015-05-17", "hours": 6}'
+
+### TIME ENTRIES-- get a time entry 
+curl {{timesheeturl}}/time-entries?userId={{userid}}
+
